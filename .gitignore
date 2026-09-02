@@ -1,0 +1,10 @@
+.DS_Store
+DerivedData/
+build/
+.build/
+.swiftpm/
+Package.resolved
+xcuserdata/
+*.xcuserstate
+CrossaBinary/Crossa.xcframework/
+CrossaBinary/*.xcframework/
