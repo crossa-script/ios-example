@@ -76,7 +76,6 @@ struct PostsView: View {
             }
         case .loaded(let result):
             resultSection(result)
-            postsSection(result)
         case .failed(let failure):
             Section(header: EmptyView()) {
                 Text("\(failure.engine.title) request failed")
@@ -139,14 +138,6 @@ struct PostsView: View {
         }
     }
 
-    private func postsSection(_ result: PostsRunResult) -> some View {
-        Section(header: Text("Posts")) {
-            ForEach(0..<result.posts.count, id: \.self) { index in
-                PostRow(post: result.posts.item(at: index))
-            }
-        }
-    }
-
     private var comparisonSection: some View {
         Section(
             header: Text("Last observations"),
@@ -202,29 +193,5 @@ private struct MetricLabel: View {
                 .font(.caption)
                 .fontWeight(.semibold)
         }
-    }
-}
-
-private struct PostRow: View {
-    let post: PostRowModel
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 6) {
-            HStack {
-                Text("#\(post.id)")
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-                Text("User \(post.userID)")
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-            }
-            Text(post.title)
-                .font(.headline)
-            Text(post.body)
-                .font(.footnote)
-                .foregroundColor(.secondary)
-                .lineLimit(3)
-        }
-        .padding(.vertical, 4)
     }
 }

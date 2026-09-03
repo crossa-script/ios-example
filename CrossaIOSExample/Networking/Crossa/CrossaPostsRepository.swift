@@ -14,7 +14,9 @@ final class CrossaPostsRepository: PostsRepositoryProtocol {
         try Task.checkCancellation()
 
         return try await withCheckedThrowingContinuation { continuation in
-            let operation = CrossaFunctions.getPosts(runtime: runtime) { [weak self] state in
+            NSLog("Crossa request started")
+            let operation = CrossaFunctions.fetchPosts(runtime: runtime) { [weak self] state in
+                NSLog("Crossa request callback received: %@", String(describing: state))
                 Task { @MainActor in
                     self?.activeOperation = nil
 
