@@ -1,7 +1,7 @@
 import Foundation
 
 @MainActor
-struct AlamofirePostsPresentationData: PostsPresentationData {
+struct AlamofirePostsPresentationData: PostsPresentationData, Sendable {
     private let posts: [AlamofirePostDTO]
 
     init(posts: [AlamofirePostDTO]) {

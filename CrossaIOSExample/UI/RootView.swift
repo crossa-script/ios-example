@@ -16,6 +16,7 @@ struct RootView: View {
 
 private struct PostsScene: View {
     @ObservedObject private var viewModel: PostsViewModel
+    @State private var comparisonStarted = false
 
     init(container: AppContainer) {
         viewModel = container.postsViewModel
@@ -24,6 +25,11 @@ private struct PostsScene: View {
     var body: some View {
         NavigationContainer {
             PostsView(viewModel: viewModel)
+        }
+        .onAppear {
+            guard !comparisonStarted else { return }
+            comparisonStarted = true
+            viewModel.runComparison()
         }
     }
 }

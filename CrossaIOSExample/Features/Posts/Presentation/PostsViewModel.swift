@@ -5,6 +5,7 @@ final class PostsViewModel: ObservableObject {
     @Published var selectedEngine: NetworkingEngine = .crossa
     @Published private(set) var state: PostsScreenState = .idle
     @Published private(set) var scenarioMetrics: [NetworkingEngine: ScenarioMetrics] = [:]
+    @Published private(set) var comparisonWinner: NetworkingEngine?
 
     private let crossaRepository: any PostsRepositoryProtocol
     private let alamofireRepository: any PostsRepositoryProtocol
@@ -17,6 +18,26 @@ final class PostsViewModel: ObservableObject {
     ) {
         self.crossaRepository = crossaRepository
         self.alamofireRepository = alamofireRepository
+    }
+
+    func runComparison() {
+        cancelActiveRun()
+        comparisonWinner = nil
+        Task { @MainActor [weak self] in
+            guard let self else { return }
+            for engine in NetworkingEngine.allCases {
+                selectedEngine = engine
+                loadingTask = nil
+                loadPosts()
+                while case .loading = state {
+                    try? await Task.sleep(nanoseconds: 200_000_000)
+                }
+                if Task.isCancelled { return }
+            }
+            comparisonWinner = scenarioMetrics.values
+                .filter { $0.successCount == $0.requestCount }
+                .min { $0.averageMilliseconds < $1.averageMilliseconds }?.engine
+        }
     }
 
     func loadPosts() {
@@ -43,6 +64,7 @@ final class PostsViewModel: ObservableObject {
         cancelActiveRun()
         state = .idle
         scenarioMetrics = [:]
+        comparisonWinner = nil
     }
 
     private func cancelActiveRun() {
@@ -103,6 +125,7 @@ final class PostsViewModel: ObservableObject {
                 maximumMilliseconds: result.maximumMilliseconds,
                 itemCount: result.totalMetrics.itemCount
             )
+            NSLog("Crossa comparison engine=%@ success=%d/%d average_ms=%.2f min_ms=%.2f max_ms=%.2f parsed_items=%d", engine.title, result.successCount, result.requestCount, result.averageMilliseconds, result.minimumMilliseconds, result.maximumMilliseconds, result.totalMetrics.itemCount)
             state = .loaded(result)
             loadingTask = nil
         } catch is CancellationError {

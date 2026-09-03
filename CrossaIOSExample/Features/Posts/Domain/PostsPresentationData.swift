@@ -1,7 +1,7 @@
 import Foundation
 
 @MainActor
-protocol PostsPresentationData {
+protocol PostsPresentationData: Sendable {
     var count: Int { get }
     func item(at index: Int) -> PostRowModel
 }

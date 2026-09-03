@@ -29,7 +29,7 @@ struct PostsView: View {
 
             HStack {
                 Button(isLoading ? "Running" : "Run 5 requests") {
-                    viewModel.loadPosts()
+                    viewModel.runComparison()
                 }
                 .disabled(isLoading)
 
@@ -61,7 +61,7 @@ struct PostsView: View {
         switch viewModel.state {
         case .idle:
             Section(header: EmptyView()) {
-                Text("Choose Crossa or Alamofire, then run the same five uncached requests.")
+                    Text("Run five uncached requests through Crossa C++/libcurl and Alamofire, then compare parsed results.")
                     .foregroundColor(.secondary)
             }
         case .loading(let engine):
@@ -117,19 +117,16 @@ struct PostsView: View {
                 Text("Total")
                 Spacer()
                 Text(result.totalMetrics.formattedMilliseconds)
-                    .monospacedDigit()
             }
             HStack {
                 Text("Average")
                 Spacer()
                 Text(formatMilliseconds(result.averageMilliseconds))
-                    .monospacedDigit()
             }
             HStack {
                 Text("Minimum / Maximum")
                 Spacer()
                 Text("\(formatMilliseconds(result.minimumMilliseconds)) / \(formatMilliseconds(result.maximumMilliseconds))")
-                    .monospacedDigit()
             }
             HStack {
                 Text("Posts")
@@ -171,6 +168,11 @@ struct PostsView: View {
                     Text("\(engine.title): no completed observation")
                         .foregroundColor(.secondary)
                 }
+            }
+            if let winner = viewModel.comparisonWinner {
+                Text("Winner: \(winner.title) by average parsed-response time")
+                    .fontWeight(.semibold)
+                    .foregroundColor(.green)
             }
         }
     }

@@ -2,7 +2,7 @@ import Crossa
 import Foundation
 
 @MainActor
-struct CrossaPostsPresentationData: PostsPresentationData {
+struct CrossaPostsPresentationData: PostsPresentationData, @unchecked Sendable {
     private let posts: CrossaList<Post>
 
     init(posts: CrossaList<Post>) {
