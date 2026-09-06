@@ -104,6 +104,23 @@ The active Crossa `CrossaOperation` and Alamofire `DataRequest` are retained by 
 
 `AppContainer` owns one `CrossaRuntime` for the application lifetime. `PostsViewModel` owns the current presentation data, which in turn owns the Crossa native result for as long as SwiftUI reads it. Clearing results releases that reference through the generated Crossa ownership path.
 
+## Latest run (2026-09-06)
+
+Built from the rebuilt Crossa 0.1.0 host compiler and a freshly generated Debug `Crossa.xcframework` (`ios-arm64` + `ios-arm64-simulator`), then installed on an iPhone 17 Pro simulator running iOS 26.2. Each engine sent 5 uncached `GET https://jsonplaceholder.typicode.com/posts` requests with a 2000ms delay.
+
+The app auto-ran the comparison twice during launch (SwiftUI `onAppear`). Both runs completed 5/5 with 100 posts:
+
+| Run | Crossa average | Alamofire 5.12.0 average | Winner |
+|---|---|---|---|
+| 1 | 26.45 ms (min 11.90, max 80.24) | 24.18 ms (min 15.13, max 55.80) | Alamofire |
+| 2 | **17.78 ms** (min 12.10, max 26.15) | 20.81 ms (min 15.44, max 27.46) | **Crossa** |
+
+On iOS Simulator the two engines are close. The captured screen is run 2, where Crossa is slightly ahead:
+
+![iOS benchmark results showing Crossa as winner](docs/screenshots/ios-benchmark-results.png)
+
+These are raw in-app observations from the repository call until the parsed list is available to SwiftUI. They are not a formal device benchmark.
+
 ## Update the framework
 
 Regenerate the XCFramework after changing files under `crossa/`, then rerun `scripts/install-crossa-framework.sh`. Do not edit generated Swift API types in this repository. If a module, simulator slice, or ABI defect appears, fix it in Crossa’s framework-generation pipeline rather than adding an app-side workaround.
