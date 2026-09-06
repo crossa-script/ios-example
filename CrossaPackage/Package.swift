@@ -1,4 +1,6 @@
 // swift-tools-version: 6.0
+// Local development override. A published binary target uses url + checksum
+// from the generated project-specific Release SDK (not a universal runtime).
 
 import PackageDescription
 

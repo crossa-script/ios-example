@@ -5,23 +5,23 @@ import Foundation
 @MainActor
 final class AppContainer {
     let crossaRuntime: CrossaRuntime
-    let crossaPostsRepository: any PostsRepositoryProtocol
-    let alamofirePostsRepository: any PostsRepositoryProtocol
+    let alamofireSession: Session
     let postsViewModel: PostsViewModel
 
     init() throws {
         let runtime = try CrossaRuntime()
         let session = AlamofireConfiguration.makeSession()
-
+        let configuration = BenchmarkConfiguration()
         crossaRuntime = runtime
-        crossaPostsRepository = CrossaPostsRepository(runtime: runtime)
-        alamofirePostsRepository = AlamofirePostsRepository(
-            session: session,
-            endpoint: ExampleConfiguration.postsEndpoint
-        )
+        alamofireSession = session
         postsViewModel = PostsViewModel(
-            crossaRepository: crossaPostsRepository,
-            alamofireRepository: alamofirePostsRepository
+            runner: BenchmarkRunner(
+                configuration: configuration,
+                clients: [
+                    CrossaPostsClient(runtime: runtime),
+                    AlamofirePostsClient(session: session, endpoint: configuration.endpoint)
+                ]
+            )
         )
     }
 }

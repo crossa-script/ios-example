@@ -1,51 +1,50 @@
 import Alamofire
 import Foundation
 
-@MainActor
-final class AlamofirePostsRepository: PostsRepositoryProtocol {
+struct AlamofirePostsClient: PostsBenchmarkClient, @unchecked Sendable {
+    let implementation = BenchmarkImplementation.alamofire
     private let session: Session
     private let endpoint: URL
-    private var activeRequest: DataRequest?
 
     init(session: Session, endpoint: URL) {
         self.session = session
         self.endpoint = endpoint
     }
 
-    func getPosts() async throws -> any PostsPresentationData {
-        try Task.checkCancellation()
+    func fetchPosts() async throws -> BenchmarkResponse {
+        let posts = try await session
+            .request(
+                endpoint,
+                method: .get,
+                headers: HTTPHeaders(ExampleConfiguration.requestHeaders.map {
+                    HTTPHeader(name: $0.key, value: $0.value)
+                })
+            )
+            .serializingDecodable([AlamofirePostDTO].self)
+            .value
+        return BenchmarkResponse(itemCount: posts.count)
+    }
+}
 
-        let request = session
-            .request(endpoint, method: .get)
-            .validate()
-        activeRequest = request
+@MainActor
+final class AlamofirePostsRepository: PostsRepositoryProtocol {
+    private let client: AlamofirePostsClient
 
-        defer {
-            if activeRequest === request {
-                activeRequest = nil
-            }
-        }
-
-        let posts: [AlamofirePostDTO]
-        do {
-            posts = try await withTaskCancellationHandler(operation: {
-                try await request
-                    .serializingDecodable([AlamofirePostDTO].self)
-                    .value
-            }, onCancel: {
-                request.cancel()
-            })
-        } catch {
-            if Task.isCancelled || (error as? AFError)?.isExplicitlyCancelledError == true {
-                throw CancellationError()
-            }
-            throw error
-        }
-
-        return AlamofirePostsPresentationData(posts: posts)
+    init(session: Session, endpoint: URL) {
+        self.client = AlamofirePostsClient(session: session, endpoint: endpoint)
     }
 
-    func cancelCurrentRequest() {
-        activeRequest?.cancel()
+    func getPosts() async throws -> any PostsPresentationData {
+        let response = try await client.fetchPosts()
+        return CountOnlyPresentationData(count: response.itemCount)
+    }
+
+    func cancelCurrentRequest() {}
+}
+
+private struct CountOnlyPresentationData: PostsPresentationData {
+    let count: Int
+    func item(at index: Int) -> PostRowModel {
+        PostRowModel(id: index, userID: 0, title: "", body: "")
     }
 }

@@ -1,60 +1,55 @@
 import Crossa
 import Foundation
 
-@MainActor
-final class CrossaPostsRepository: PostsRepositoryProtocol {
+struct CrossaPostsClient: PostsBenchmarkClient, @unchecked Sendable {
+    let implementation = BenchmarkImplementation.crossa
     private let runtime: CrossaRuntime
-    private var activeOperation: CrossaOperation?
 
     init(runtime: CrossaRuntime) {
         self.runtime = runtime
     }
 
-    func getPosts() async throws -> any PostsPresentationData {
-        try Task.checkCancellation()
-
-        return try await withCheckedThrowingContinuation { continuation in
-            NSLog("Crossa request started")
-            let operation = CrossaFunctions.fetchPosts(runtime: runtime) { [weak self] state in
-                NSLog("Crossa request callback received: %@", String(describing: state))
-                Task { @MainActor in
-                    self?.activeOperation = nil
-
-                    switch state {
-                    case .success(let posts):
-                        continuation.resume(returning: CrossaPostsPresentationData(posts: posts))
-                    case .failed(let error):
-                        continuation.resume(throwing: CrossaPostsRepositoryError(error: error))
-                    case .cancelled:
-                        continuation.resume(throwing: CancellationError())
-                    @unknown default:
-                        continuation.resume(throwing: CrossaPostsRepositoryUnexpectedStateError())
-                    }
-                }
-            }
-            activeOperation = operation
-
-            if Task.isCancelled {
-                operation.cancel()
-            }
+    func fetchPosts() async throws -> BenchmarkResponse {
+        let posts = try await CrossaFunctions.fetchPosts(runtime: runtime)
+        let nativeReadyCount = posts.count
+        let clock = ContinuousClock()
+        let start = clock.now
+        for index in posts.indices {
+            let post = posts[index]
+            _ = (post.userId, post.id, post.title, post.body)
         }
+        let materialization = start.duration(to: clock.now)
+        let attoseconds = UInt64(max(materialization.components.attoseconds, 0))
+        let seconds = UInt64(max(materialization.components.seconds, 0))
+        return BenchmarkResponse(
+            itemCount: nativeReadyCount,
+            materializationNanoseconds: seconds &* 1_000_000_000 &+ attoseconds / 1_000_000_000
+        )
+    }
+}
+
+@MainActor
+final class CrossaPostsRepository: PostsRepositoryProtocol {
+    private let client: CrossaPostsClient
+    private var activeTask: Task<Void, Never>?
+
+    init(runtime: CrossaRuntime) {
+        self.client = CrossaPostsClient(runtime: runtime)
+    }
+
+    func getPosts() async throws -> any PostsPresentationData {
+        let response = try await client.fetchPosts()
+        return CountOnlyPresentationData(count: response.itemCount)
     }
 
     func cancelCurrentRequest() {
-        activeOperation?.cancel()
+        activeTask?.cancel()
     }
 }
 
-struct CrossaPostsRepositoryError: LocalizedError {
-    let error: CrossaError
-
-    var errorDescription: String? {
-        "Crossa [domain \(error.domain), code \(error.code)]: \(error.message)"
-    }
-}
-
-struct CrossaPostsRepositoryUnexpectedStateError: LocalizedError {
-    var errorDescription: String? {
-        "Crossa returned an unsupported operation state."
+private struct CountOnlyPresentationData: PostsPresentationData {
+    let count: Int
+    func item(at index: Int) -> PostRowModel {
+        PostRowModel(id: index, userID: 0, title: "", body: "")
     }
 }
