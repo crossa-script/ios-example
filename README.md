@@ -106,18 +106,18 @@ The active Crossa `CrossaOperation` and Alamofire `DataRequest` are retained by 
 
 ## Latest run (2026-09-06)
 
-Built from the rebuilt Crossa 0.1.0 host compiler and a freshly generated Debug `Crossa.xcframework` (`ios-arm64` + `ios-arm64-simulator`), then installed on an iPhone 17 Pro simulator running iOS 26.2. Each engine sent 5 uncached `GET https://jsonplaceholder.typicode.com/posts` requests with a 2000ms delay.
+Rebuilt with the same native HTTP transport fix used on Android (`CURLOPT_HTTP_VERSION_2TLS` is attempted, then HTTP/1.1 is used when HTTP/2 is unavailable). Debug `Crossa.xcframework` (`ios-arm64` + `ios-arm64-simulator`) on an iPhone 17 Pro simulator, iOS 26.2.
 
-The app auto-ran the comparison twice during launch (SwiftUI `onAppear`). Both runs completed 5/5 with 100 posts:
+One comparison of 5 uncached `GET https://jsonplaceholder.typicode.com/posts` requests with a 2000ms delay. Both engines completed 5/5 with 100 posts. No transport-option failures.
 
-| Run | Crossa average | Alamofire 5.12.0 average | Winner |
-|---|---|---|---|
-| 1 | 26.45 ms (min 11.90, max 80.24) | 24.18 ms (min 15.13, max 55.80) | Alamofire |
-| 2 | **17.78 ms** (min 12.10, max 26.15) | 20.81 ms (min 15.44, max 27.46) | **Crossa** |
+| Rank | Engine | Average | Min | Max | Success |
+|---|---|---|---|---|---|
+| 1 | **Crossa** | **29.19 ms** | 14.54 ms | 80.30 ms | 5/5 |
+| 2 | Alamofire 5.12.0 | 37.28 ms | 14.59 ms | 118.54 ms | 5/5 |
 
-On iOS Simulator the two engines are close. The captured screen is run 2, where Crossa is slightly ahead:
+**Crossa still wins on iOS** in this rebuild, with a smaller gap than Android. Screenshot of the completed Alamofire card after both engines finished:
 
-![iOS benchmark results showing Crossa as winner](docs/screenshots/ios-benchmark-results.png)
+![iOS benchmark results](docs/screenshots/ios-benchmark-results.png)
 
 These are raw in-app observations from the repository call until the parsed list is available to SwiftUI. They are not a formal device benchmark.
 
