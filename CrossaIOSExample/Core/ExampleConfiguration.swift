@@ -5,7 +5,7 @@ enum ExampleConfiguration {
     static let postsEndpoint = baseURL.appendingPathComponent("posts")
     static let requestIterations = 5
     static let requestDelayNanoseconds: UInt64 = 2_000_000_000
-    static let crossaArtifactChecksum = "e1d3fb6872bde28fe1a185ade80b97187366c9fbbefa4f3a3a049503a448d82c"
+    static let crossaArtifactChecksum = "d399ea9271e108d0f3f0319f44d49d7b12368abb1f23296e54818b762e56b976"
     static let crossaSourceCommit = "03d421801191f67c59722e96a1cc4a962a4b54ba"
     static let requestHeaders = [
         "Accept": "application/json",
