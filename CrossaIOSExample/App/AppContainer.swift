@@ -11,7 +11,16 @@ final class AppContainer {
     init() throws {
         let runtime = try CrossaRuntime()
         let session = AlamofireConfiguration.makeSession()
-        let configuration = BenchmarkConfiguration()
+        let benchmarkMode: BenchmarkMode = ProcessInfo.processInfo.arguments.contains("--crossa-benchmark-cold") ? .cold : .warm
+        let configuration = BenchmarkConfiguration(mode: benchmarkMode)
+        let clientFactory: @Sendable () throws -> [any PostsBenchmarkClient] = {
+            let runtime = try CrossaRuntime()
+            let session = AlamofireConfiguration.makeSession()
+            return [
+                CrossaPostsClient(runtime: runtime),
+                AlamofirePostsClient(session: session, endpoint: configuration.endpoint)
+            ]
+        }
         crossaRuntime = runtime
         alamofireSession = session
         postsViewModel = PostsViewModel(
@@ -20,7 +29,8 @@ final class AppContainer {
                 clients: [
                     CrossaPostsClient(runtime: runtime),
                     AlamofirePostsClient(session: session, endpoint: configuration.endpoint)
-                ]
+                ],
+                clientFactory: clientFactory
             )
         )
     }

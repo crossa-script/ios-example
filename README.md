@@ -41,6 +41,7 @@ Debug XCFrameworks remain useful for native debugging:
 The in-app harness is an observation tool, not a product performance claim.
 
 - One Crossa runtime and one Alamofire `Session` are reused for warm runs.
+- Cold runs create and dispose a fresh Crossa runtime and Alamofire `Session` for every measured sample.
 - Warmups are excluded.
 - Measured rounds alternate Crossa and Alamofire.
 - Timing uses `ContinuousClock`.

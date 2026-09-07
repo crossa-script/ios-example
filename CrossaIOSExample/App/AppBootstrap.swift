@@ -15,8 +15,5 @@ final class AppBootstrap: ObservableObject {
             initializationError = error.localizedDescription
         }
         container = builtContainer
-        if ProcessInfo.processInfo.arguments.contains("--crossa-benchmark-auto") {
-            builtContainer?.postsViewModel.runComparison()
-        }
     }
 }

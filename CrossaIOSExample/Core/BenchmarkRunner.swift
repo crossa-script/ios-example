@@ -3,6 +3,7 @@ import Foundation
 struct BenchmarkRunner: Sendable {
     var configuration: BenchmarkConfiguration
     var clients: [any PostsBenchmarkClient]
+    var clientFactory: @Sendable () throws -> [any PostsBenchmarkClient]
 
     func run() async -> BenchmarkRunResult {
         if configuration.mode == .cold {
@@ -34,8 +35,17 @@ struct BenchmarkRunner: Sendable {
     private func runCold() async -> BenchmarkRunResult {
         var samples: [BenchmarkSample] = []
         for iteration in 0..<configuration.measuredIterations {
-            for client in rotating(clients, iteration: iteration) {
-                samples.append(await sample(client: client, iteration: iteration))
+            for implementation in rotating(BenchmarkImplementation.allCases, iteration: iteration) {
+                do {
+                    let coldClients = try clientFactory()
+                    guard let client = coldClients.first(where: { $0.implementation == implementation }) else {
+                        samples.append(failedSample(implementation: implementation, iteration: iteration, error: "client unavailable"))
+                        continue
+                    }
+                    samples.append(await sample(client: client, iteration: iteration))
+                } catch {
+                    samples.append(failedSample(implementation: implementation, iteration: iteration, error: error.localizedDescription))
+                }
             }
         }
         return result(samples)
@@ -81,6 +91,23 @@ struct BenchmarkRunner: Sendable {
         return Array(clients[offset...]) + Array(clients[..<offset])
     }
 
+    private func rotating(_ implementations: [BenchmarkImplementation], iteration: Int) -> [BenchmarkImplementation] {
+        guard !implementations.isEmpty else { return implementations }
+        let offset = iteration % implementations.count
+        return Array(implementations[offset...]) + Array(implementations[..<offset])
+    }
+
+    private func failedSample(implementation: BenchmarkImplementation, iteration: Int, error: String) -> BenchmarkSample {
+        BenchmarkSample(
+            implementation: implementation,
+            iteration: iteration,
+            durationNanoseconds: 0,
+            success: false,
+            itemCount: 0,
+            error: error
+        )
+    }
+
     private func result(_ samples: [BenchmarkSample]) -> BenchmarkRunResult {
         let summaries = BenchmarkImplementation.allCases.map { implementation in
             BenchmarkStatistics.summarize(
@@ -121,6 +148,8 @@ struct BenchmarkRunner: Sendable {
             appVersion: Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0",
             buildConfiguration: build,
             crossaArtifact: "release",
+            crossaArtifactChecksum: ExampleConfiguration.crossaArtifactChecksum,
+            crossaSourceCommit: ExampleConfiguration.crossaSourceCommit,
             warmupIterations: configuration.warmupIterations,
             measuredIterations: configuration.measuredIterations,
             endpoint: configuration.endpoint.absoluteString,
