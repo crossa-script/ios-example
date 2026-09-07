@@ -36,6 +36,12 @@ Debug XCFrameworks remain useful for native debugging:
 
 `CrossaPackage/Package.swift` is a local-development `binaryTarget(path:)` override. The generated Release output also contains `Crossa.xcframework.zip`, `checksum.txt`, and `Package.swift` for SwiftPM binary distribution. That package is project-specific; it is not a universal Crossa runtime. Remote `url` + checksum consumption requires publishing the ZIP from the repository that owns this generated SDK.
 
+The generated `metadata/artifact-manifest.json` records the CLI SHA-256, Crossa
+source commit, runtime ABI, target, and configuration. The SwiftPM-facing
+`checksum.txt` is the canonical ZIP checksum. Use `--crossa-benchmark` or
+`--crossa-benchmark-cold` when launching the app; the raw result is written to
+the app container as `Documents/benchmark-result.json`.
+
 ## Benchmark methodology
 
 The in-app harness is an observation tool, not a product performance claim.
@@ -47,3 +53,7 @@ The in-app harness is an observation tool, not a product performance claim.
 - Timing uses `ContinuousClock`.
 - Crossa reports native-ready list availability and field materialization separately.
 - Simulator and remote-network timings are not production evidence.
+
+The repository does not claim a physical-device result until the same Release
+artifact is installed on an ARM64 device and the raw result is archived with
+its manifest.

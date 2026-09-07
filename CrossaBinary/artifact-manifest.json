@@ -1,0 +1,11 @@
+{
+  "crossaVersion": "0.1.0",
+  "sourceCommit": "e13bde22f4210f0d0d3e508c28f32464aba105bf",
+  "cliPath": "/Users/yazantarifi/Crossa/Crossa/build/crossa",
+  "cliSha256": "3871b75e78f9ef5ef3854cf47e534dd252ea5357875a9c53459b8ef0710f3d60",
+  "runtimeAbi": 1,
+  "target": "ios",
+  "configuration": "Release",
+  "zip": "Crossa.xcframework.zip",
+  "zipSha256": "e1d3fb6872bde28fe1a185ade80b97187366c9fbbefa4f3a3a049503a448d82c"
+}
