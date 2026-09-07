@@ -6,12 +6,17 @@ final class AppBootstrap: ObservableObject {
     let initializationError: String?
 
     init() {
+        let builtContainer: AppContainer?
         do {
-            container = try AppContainer()
+            builtContainer = try AppContainer()
             initializationError = nil
         } catch {
-            container = nil
+            builtContainer = nil
             initializationError = error.localizedDescription
+        }
+        container = builtContainer
+        if ProcessInfo.processInfo.arguments.contains("--crossa-benchmark-auto") {
+            builtContainer?.postsViewModel.runComparison()
         }
     }
 }

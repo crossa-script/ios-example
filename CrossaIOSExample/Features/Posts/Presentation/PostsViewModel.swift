@@ -18,11 +18,23 @@ final class PostsViewModel: ObservableObject {
         loadingTask = Task.detached { [runner] in
             let result = await runner.run()
             await MainActor.run { [weak self] in
+                self?.printBenchmarkResult(result)
                 self?.lastResult = result
                 self?.state = .loaded(result)
                 self?.loadingTask = nil
             }
         }
+    }
+
+    private func printBenchmarkResult(_ result: BenchmarkRunResult) {
+        var lines: [String] = []
+        for summary in result.summaries {
+            let line = "\(summary.implementation.rawValue) p50=\(summary.medianNanoseconds) p95=\(summary.p95Nanoseconds) mean=\(summary.meanNanoseconds) success=\(summary.successCount)/\(summary.sampleCount)"
+            lines.append(line)
+            print("CROSSA_BENCHMARK_RESULT \(line)")
+        }
+        let url = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("benchmark-result.txt")
+        try? lines.joined(separator: "\n").write(to: url, atomically: true, encoding: .utf8)
     }
 
     func cancelCurrentRequest() {

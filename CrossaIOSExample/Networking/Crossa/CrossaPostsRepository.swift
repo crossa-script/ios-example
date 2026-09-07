@@ -12,18 +12,14 @@ struct CrossaPostsClient: PostsBenchmarkClient, @unchecked Sendable {
     func fetchPosts() async throws -> BenchmarkResponse {
         let posts = try await CrossaFunctions.fetchPosts(runtime: runtime)
         let nativeReadyCount = posts.count
-        let clock = ContinuousClock()
-        let start = clock.now
+        let start = DispatchTime.now().uptimeNanoseconds
         for index in posts.indices {
             let post = posts[index]
             _ = (post.userId, post.id, post.title, post.body)
         }
-        let materialization = start.duration(to: clock.now)
-        let attoseconds = UInt64(max(materialization.components.attoseconds, 0))
-        let seconds = UInt64(max(materialization.components.seconds, 0))
         return BenchmarkResponse(
             itemCount: nativeReadyCount,
-            materializationNanoseconds: seconds &* 1_000_000_000 &+ attoseconds / 1_000_000_000
+            materializationNanoseconds: DispatchTime.now().uptimeNanoseconds - start
         )
     }
 }

@@ -42,15 +42,14 @@ struct BenchmarkRunner: Sendable {
     }
 
     private func sample(client: any PostsBenchmarkClient, iteration: Int) async -> BenchmarkSample {
-        let clock = ContinuousClock()
-        let start = clock.now
+        let start = DispatchTime.now().uptimeNanoseconds
         do {
             try Task.checkCancellation()
             let response = try await client.fetchPosts()
             return BenchmarkSample(
                 implementation: client.implementation,
                 iteration: iteration,
-                durationNanoseconds: nanoseconds(start.duration(to: clock.now)),
+                durationNanoseconds: DispatchTime.now().uptimeNanoseconds - start,
                 success: true,
                 itemCount: response.itemCount,
                 materializationNanoseconds: response.materializationNanoseconds
@@ -59,7 +58,7 @@ struct BenchmarkRunner: Sendable {
             return BenchmarkSample(
                 implementation: client.implementation,
                 iteration: iteration,
-                durationNanoseconds: nanoseconds(start.duration(to: clock.now)),
+                durationNanoseconds: DispatchTime.now().uptimeNanoseconds - start,
                 success: false,
                 itemCount: 0,
                 error: "cancelled"
@@ -68,7 +67,7 @@ struct BenchmarkRunner: Sendable {
             return BenchmarkSample(
                 implementation: client.implementation,
                 iteration: iteration,
-                durationNanoseconds: nanoseconds(start.duration(to: clock.now)),
+                durationNanoseconds: DispatchTime.now().uptimeNanoseconds - start,
                 success: false,
                 itemCount: 0,
                 error: error.localizedDescription
@@ -131,10 +130,4 @@ struct BenchmarkRunner: Sendable {
         )
     }
 
-    private func nanoseconds(_ duration: Duration) -> UInt64 {
-        let components = duration.components
-        let seconds = UInt64(max(components.seconds, 0))
-        let attoseconds = UInt64(max(components.attoseconds, 0))
-        return seconds &* 1_000_000_000 &+ attoseconds / 1_000_000_000
-    }
 }
