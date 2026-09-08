@@ -65,9 +65,6 @@ struct BenchmarkMetadata: Sendable {
     var architecture: String
     var appVersion: String
     var buildConfiguration: String
-    var crossaArtifact: String
-    var crossaArtifactChecksum: String
-    var crossaSourceCommit: String
     var warmupIterations: Int
     var measuredIterations: Int
     var endpoint: String
