@@ -1,0 +1,148 @@
+{
+  "metadata" : {
+    "endpoint" : "https:\/\/jsonplaceholder.typicode.com\/posts",
+    "crossaArtifactChecksum" : "86889bb70f6d0e19ef094ce7496ea6032e46d92cc662d3d58117c7b75229e438",
+    "buildConfiguration" : "Release",
+    "measuredIterations" : 8,
+    "deviceModel" : "iPhone15,3",
+    "appVersion" : "1.0",
+    "warmupIterations" : 2,
+    "crossaArtifact" : "release",
+    "timestamp" : 1788862866.7426748,
+    "systemVersion" : "Version 17.5 (Build 21F79)",
+    "architecture" : "arm64",
+    "crossaSourceCommit" : "8c362e10fba65cbc2279f08c06eb5469e16a72e5",
+    "endpointKind" : "remote",
+    "mode" : "cold"
+  },
+  "samples" : [
+    {
+      "success" : true,
+      "materializationNanoseconds" : 98084,
+      "implementation" : "crossa",
+      "itemCount" : 100,
+      "iteration" : 0,
+      "durationNanoseconds" : 87709708
+    },
+    {
+      "success" : true,
+      "iteration" : 0,
+      "itemCount" : 100,
+      "durationNanoseconds" : 67708958,
+      "materializationNanoseconds" : null,
+      "implementation" : "alamofire"
+    },
+    {
+      "implementation" : "alamofire",
+      "iteration" : 1,
+      "itemCount" : 100,
+      "durationNanoseconds" : 48211458,
+      "success" : true,
+      "materializationNanoseconds" : null
+    },
+    {
+      "success" : true,
+      "itemCount" : 100,
+      "materializationNanoseconds" : 82292,
+      "implementation" : "crossa",
+      "iteration" : 1,
+      "durationNanoseconds" : 32091375
+    },
+    {
+      "itemCount" : 100,
+      "materializationNanoseconds" : 81500,
+      "success" : true,
+      "implementation" : "crossa",
+      "iteration" : 2,
+      "durationNanoseconds" : 30508416
+    },
+    {
+      "success" : true,
+      "materializationNanoseconds" : null,
+      "implementation" : "alamofire",
+      "itemCount" : 100,
+      "iteration" : 2,
+      "durationNanoseconds" : 39737125
+    },
+    {
+      "iteration" : 3,
+      "itemCount" : 100,
+      "materializationNanoseconds" : null,
+      "durationNanoseconds" : 39447250,
+      "implementation" : "alamofire",
+      "success" : true
+    },
+    {
+      "durationNanoseconds" : 32519458,
+      "materializationNanoseconds" : 85667,
+      "success" : true,
+      "implementation" : "crossa",
+      "itemCount" : 100,
+      "iteration" : 3
+    },
+    {
+      "success" : true,
+      "durationNanoseconds" : 30727834,
+      "itemCount" : 100,
+      "materializationNanoseconds" : 84208,
+      "implementation" : "crossa",
+      "iteration" : 4
+    },
+    {
+      "success" : true,
+      "durationNanoseconds" : 43985709,
+      "itemCount" : 100,
+      "implementation" : "alamofire",
+      "materializationNanoseconds" : null,
+      "iteration" : 4
+    },
+    {
+      "materializationNanoseconds" : null,
+      "durationNanoseconds" : 122723333,
+      "implementation" : "alamofire",
+      "success" : true,
+      "itemCount" : 100,
+      "iteration" : 5
+    },
+    {
+      "materializationNanoseconds" : 80916,
+      "implementation" : "crossa",
+      "success" : true,
+      "itemCount" : 100,
+      "iteration" : 5,
+      "durationNanoseconds" : 32414250
+    },
+    {
+      "materializationNanoseconds" : 91333,
+      "implementation" : "crossa",
+      "durationNanoseconds" : 31792750,
+      "iteration" : 6,
+      "success" : true,
+      "itemCount" : 100
+    },
+    {
+      "implementation" : "alamofire",
+      "iteration" : 6,
+      "durationNanoseconds" : 40030542,
+      "success" : true,
+      "itemCount" : 100,
+      "materializationNanoseconds" : null
+    },
+    {
+      "durationNanoseconds" : 38234250,
+      "success" : true,
+      "itemCount" : 100,
+      "materializationNanoseconds" : null,
+      "implementation" : "alamofire",
+      "iteration" : 7
+    },
+    {
+      "itemCount" : 100,
+      "materializationNanoseconds" : 76917,
+      "iteration" : 7,
+      "durationNanoseconds" : 31054209,
+      "implementation" : "crossa",
+      "success" : true
+    }
+  ]
+}

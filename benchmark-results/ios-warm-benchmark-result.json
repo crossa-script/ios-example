@@ -1,0 +1,148 @@
+{
+  "metadata" : {
+    "systemVersion" : "Version 17.5 (Build 21F79)",
+    "endpoint" : "https:\/\/jsonplaceholder.typicode.com\/posts",
+    "architecture" : "arm64",
+    "appVersion" : "1.0",
+    "warmupIterations" : 2,
+    "deviceModel" : "iPhone15,3",
+    "buildConfiguration" : "Release",
+    "mode" : "warm",
+    "timestamp" : 1788862819.4527459,
+    "crossaSourceCommit" : "8c362e10fba65cbc2279f08c06eb5469e16a72e5",
+    "endpointKind" : "remote",
+    "measuredIterations" : 8,
+    "crossaArtifactChecksum" : "86889bb70f6d0e19ef094ce7496ea6032e46d92cc662d3d58117c7b75229e438",
+    "crossaArtifact" : "release"
+  },
+  "samples" : [
+    {
+      "materializationNanoseconds" : 92417,
+      "durationNanoseconds" : 12678541,
+      "implementation" : "crossa",
+      "iteration" : 0,
+      "success" : true,
+      "itemCount" : 100
+    },
+    {
+      "iteration" : 0,
+      "durationNanoseconds" : 14159334,
+      "success" : true,
+      "itemCount" : 100,
+      "materializationNanoseconds" : null,
+      "implementation" : "alamofire"
+    },
+    {
+      "itemCount" : 100,
+      "implementation" : "alamofire",
+      "durationNanoseconds" : 12141458,
+      "success" : true,
+      "materializationNanoseconds" : null,
+      "iteration" : 1
+    },
+    {
+      "durationNanoseconds" : 14255833,
+      "iteration" : 1,
+      "success" : true,
+      "itemCount" : 100,
+      "implementation" : "crossa",
+      "materializationNanoseconds" : 85833
+    },
+    {
+      "success" : true,
+      "durationNanoseconds" : 11675667,
+      "implementation" : "crossa",
+      "itemCount" : 100,
+      "materializationNanoseconds" : 77291,
+      "iteration" : 2
+    },
+    {
+      "materializationNanoseconds" : null,
+      "implementation" : "alamofire",
+      "iteration" : 2,
+      "durationNanoseconds" : 12196708,
+      "success" : true,
+      "itemCount" : 100
+    },
+    {
+      "success" : true,
+      "durationNanoseconds" : 13467250,
+      "materializationNanoseconds" : null,
+      "implementation" : "alamofire",
+      "iteration" : 3,
+      "itemCount" : 100
+    },
+    {
+      "success" : true,
+      "materializationNanoseconds" : 84750,
+      "implementation" : "crossa",
+      "durationNanoseconds" : 12902167,
+      "itemCount" : 100,
+      "iteration" : 3
+    },
+    {
+      "iteration" : 4,
+      "durationNanoseconds" : 11651500,
+      "implementation" : "crossa",
+      "materializationNanoseconds" : 81250,
+      "success" : true,
+      "itemCount" : 100
+    },
+    {
+      "implementation" : "alamofire",
+      "success" : true,
+      "itemCount" : 100,
+      "iteration" : 4,
+      "materializationNanoseconds" : null,
+      "durationNanoseconds" : 13626250
+    },
+    {
+      "implementation" : "alamofire",
+      "durationNanoseconds" : 101574416,
+      "success" : true,
+      "itemCount" : 100,
+      "iteration" : 5,
+      "materializationNanoseconds" : null
+    },
+    {
+      "success" : true,
+      "implementation" : "crossa",
+      "durationNanoseconds" : 12459667,
+      "iteration" : 5,
+      "materializationNanoseconds" : 80375,
+      "itemCount" : 100
+    },
+    {
+      "implementation" : "crossa",
+      "success" : true,
+      "durationNanoseconds" : 12824917,
+      "materializationNanoseconds" : 82875,
+      "iteration" : 6,
+      "itemCount" : 100
+    },
+    {
+      "durationNanoseconds" : 13001292,
+      "implementation" : "alamofire",
+      "itemCount" : 100,
+      "iteration" : 6,
+      "materializationNanoseconds" : null,
+      "success" : true
+    },
+    {
+      "durationNanoseconds" : 13024209,
+      "itemCount" : 100,
+      "materializationNanoseconds" : null,
+      "iteration" : 7,
+      "success" : true,
+      "implementation" : "alamofire"
+    },
+    {
+      "success" : true,
+      "durationNanoseconds" : 12421916,
+      "itemCount" : 100,
+      "iteration" : 7,
+      "materializationNanoseconds" : 80000,
+      "implementation" : "crossa"
+    }
+  ]
+}
