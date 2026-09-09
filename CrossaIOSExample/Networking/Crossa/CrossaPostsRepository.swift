@@ -10,17 +10,26 @@ struct CrossaPostsClient: PostsBenchmarkClient, @unchecked Sendable {
     }
 
     func fetchPosts() async throws -> BenchmarkResponse {
-        let posts = try await CrossaFunctions.fetchPosts(runtime: runtime)
-        let nativeReadyCount = posts.count
-        let start = DispatchTime.now().uptimeNanoseconds
-        for index in posts.indices {
-            let post = posts[index]
-            _ = (post.userId, post.id, post.title, post.body)
+        do {
+            let posts = try await CrossaFunctions.fetchPosts(runtime: runtime)
+            let nativeReadyCount = posts.count
+            let start = DispatchTime.now().uptimeNanoseconds
+            for index in posts.indices {
+                let post = posts[index]
+                _ = (post.userId, post.id, post.title, post.body)
+            }
+            return BenchmarkResponse(
+                itemCount: nativeReadyCount,
+                materializationNanoseconds: DispatchTime.now().uptimeNanoseconds - start
+            )
+        } catch {
+            if let crossaError = error as? CrossaError {
+                print("CROSSA_BENCHMARK_ERROR message=\(crossaError.message) domain=\(crossaError.domain) code=\(crossaError.code)")
+            } else {
+                print("CROSSA_BENCHMARK_ERROR \(error)")
+            }
+            throw error
         }
-        return BenchmarkResponse(
-            itemCount: nativeReadyCount,
-            materializationNanoseconds: DispatchTime.now().uptimeNanoseconds - start
-        )
     }
 }
 

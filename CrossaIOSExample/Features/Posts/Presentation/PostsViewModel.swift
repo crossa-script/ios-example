@@ -35,6 +35,12 @@ final class PostsViewModel: ObservableObject {
             lines.append(line)
             print("CROSSA_BENCHMARK_RESULT \(line)")
         }
+        for sample in result.samples where !sample.success {
+            let error = sample.error ?? "unknown error"
+            let line = "\(sample.implementation.rawValue) iteration=\(sample.iteration) error=\(error)"
+            lines.append(line)
+            print("CROSSA_BENCHMARK_ERROR \(line)")
+        }
         let url = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("benchmark-result.txt")
         try? lines.joined(separator: "\n").write(to: url, atomically: true, encoding: .utf8)
         let metadata = result.metadata

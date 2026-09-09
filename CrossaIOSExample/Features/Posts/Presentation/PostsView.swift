@@ -111,39 +111,10 @@ private struct LibraryResultCard: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 14) {
-            HStack(alignment: .top) {
-                VStack(alignment: .leading, spacing: 4) {
-                    Text("#\(rank + 1)  \(summary.implementation.rawValue.capitalized)")
-                        .font(.title3.weight(.bold))
-                    Text("\(summary.successCount)/\(summary.sampleCount) successful rounds")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                }
-                Spacer()
-                if rank == 0 {
-                    Text("FASTEST p50")
-                        .font(.caption2.weight(.bold))
-                        .foregroundStyle(.green)
-                }
-            }
-            HStack(spacing: 10) {
-                MetricTile(title: "p50", value: format(summary.medianNanoseconds))
-                MetricTile(title: "p95", value: format(summary.p95Nanoseconds))
-                MetricTile(title: "mean", value: format(summary.meanNanoseconds))
-            }
-            HStack {
-                Text("Range")
-                Spacer()
-                Text("\(format(summary.minNanoseconds)) – \(format(summary.maxNanoseconds))")
-                    .fontWeight(.semibold)
-            }
-            .font(.subheadline)
-            if let fastest, rank > 0, fastest.medianNanoseconds > 0 {
-                let delta = (Double(summary.medianNanoseconds) / Double(fastest.medianNanoseconds) - 1) * 100
-                Text("+\(String(format: "%.1f", delta))% p50 vs fastest")
-                    .font(.caption.weight(.semibold))
-                    .foregroundStyle(.secondary)
-            }
+            resultHeader
+            metricSummary
+            rangeSummary
+            relativeSummary
         }
         .padding(18)
         .background(rank == 0 ? Color.green.opacity(0.12) : Color(uiColor: .secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 20, style: .continuous))
@@ -152,6 +123,52 @@ private struct LibraryResultCard: View {
 
     private func format(_ nanoseconds: UInt64) -> String { String(format: "%.2f ms", Double(nanoseconds) / 1_000_000) }
     private func format(_ nanoseconds: Double) -> String { String(format: "%.2f ms", nanoseconds / 1_000_000) }
+
+    private var resultHeader: some View {
+        HStack(alignment: .top) {
+            VStack(alignment: .leading, spacing: 4) {
+                Text("#\(rank + 1)  \(summary.implementation.rawValue.capitalized)")
+                    .font(.title3.weight(.bold))
+                Text("\(summary.successCount)/\(summary.sampleCount) successful rounds")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+            Spacer()
+            if rank == 0 {
+                Text("FASTEST p50")
+                    .font(.caption2.weight(.bold))
+                    .foregroundStyle(.green)
+            }
+        }
+    }
+
+    private var metricSummary: some View {
+        HStack(spacing: 10) {
+            MetricTile(title: "p50", value: format(summary.medianNanoseconds))
+            MetricTile(title: "p95", value: format(summary.p95Nanoseconds))
+            MetricTile(title: "mean", value: format(summary.meanNanoseconds))
+        }
+    }
+
+    private var rangeSummary: some View {
+        HStack {
+            Text("Range")
+            Spacer()
+            Text("\(format(summary.minNanoseconds)) – \(format(summary.maxNanoseconds))")
+                .fontWeight(.semibold)
+        }
+        .font(.subheadline)
+    }
+
+    @ViewBuilder
+    private var relativeSummary: some View {
+        if let fastest, rank > 0, fastest.medianNanoseconds > 0 {
+            let delta = (Double(summary.medianNanoseconds) / Double(fastest.medianNanoseconds) - 1) * 100
+            Text("+\(String(format: "%.1f", delta))% p50 vs fastest")
+                .font(.caption.weight(.semibold))
+                .foregroundStyle(.secondary)
+        }
+    }
 }
 
 private struct MetricTile: View {
